@@ -14,15 +14,19 @@ export default function Home() {
   const [result, setResult] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const image_topic = process.env.NEXT_PUBLIC_IMAGE_TOPIC || "";
+  const result_topic = process.env.NEXT_PUBLIC_RESULT_TOPIC || "";
 
   useEffect(() => {
     // Connect via WebSocket
-    const client: MqttClient = mqtt.connect("ws://127.0.0.1:9001");
+    const client: MqttClient = mqtt.connect(
+      process.env.NEXT_PUBLIC_MQTT_URL || ""
+    );
 
     client.on("connect", () => {
       setIsConnected(true);
-      client.subscribe("glare/image");
-      client.subscribe("glare/result");
+      client.subscribe(image_topic);
+      client.subscribe(result_topic);
     });
 
     client.on("disconnect", () => {
@@ -30,15 +34,16 @@ export default function Home() {
     });
 
     client.on("message", (topic, payload) => {
-      if (topic === "glare/image") {
+      if (topic === image_topic) {
         // Handle image
-        const blob = new Blob([payload], { type: "image/jpeg" });
+        const blob = new Blob([payload as BlobPart], { type: "image/jpeg" });
         setImageUrl(URL.createObjectURL(blob));
-      } else if (topic === "glare/result") {
+      } else if (topic === result_topic) {
         const text = payload.toString();
 
         try {
           const parsed = JSON.parse(text);
+          console.log("Parsed result:", parsed);
           if (parsed.result) {
             setResult(parsed.result);
           }
@@ -55,7 +60,7 @@ export default function Home() {
     return () => {
       client.end();
     };
-  }, []);
+  }, [image_topic, result_topic]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
