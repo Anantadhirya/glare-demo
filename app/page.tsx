@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import mqtt, { MqttClient } from "mqtt";
 
 type LeaderboardEntry = {
   name: string;
   similarity: number;
 };
+
+const CLEAR_DELAY = 10; // seconds
 
 export default function Home() {
   const [messages, setMessages] = useState<string[]>([]);
@@ -16,6 +18,29 @@ export default function Home() {
   const [isConnected, setIsConnected] = useState(false);
   const image_topic = process.env.NEXT_PUBLIC_IMAGE_TOPIC || "";
   const result_topic = process.env.NEXT_PUBLIC_RESULT_TOPIC || "";
+  const clearTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clear result after delay when no new result comes in
+  useEffect(() => {
+    if (result) {
+      // Clear any existing timer
+      if (clearTimerRef.current) {
+        clearTimeout(clearTimerRef.current);
+      }
+
+      // Set new timer to clear result and leaderboard
+      clearTimerRef.current = setTimeout(() => {
+        setResult(null);
+        setLeaderboard([]);
+      }, CLEAR_DELAY * 1000);
+    }
+
+    return () => {
+      if (clearTimerRef.current) {
+        clearTimeout(clearTimerRef.current);
+      }
+    };
+  }, [result]);
 
   useEffect(() => {
     // Connect via WebSocket
