@@ -106,7 +106,7 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Image Display */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-1">
             <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-md rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
@@ -120,14 +120,16 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="aspect-video bg-slate-100 dark:bg-slate-700 rounded-xl overflow-hidden shadow-inner">
+              <div className="aspect-[3/4] relative bg-slate-100 dark:bg-slate-700 rounded-xl overflow-hidden shadow-inner">
                 {imageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={imageUrl}
-                    alt="Live feed from camera"
-                    className="w-full h-full object-contain transition-all duration-300 hover:scale-105"
-                  />
+                  <div className="w-[133%] h-[75%] origin-top-left object-contain transition-all duration-300 hover:scale-105 absolute top-full rotate-[-90deg]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={imageUrl}
+                      alt="Live feed from camera"
+                      className="w-full h-full object-contain transition-all duration-300 hover:scale-105"
+                    />
+                  </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full text-slate-500 dark:text-slate-400">
                     <svg
@@ -152,10 +154,15 @@ export default function Home() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
 
-              {/* Recognition Result */}
-              {result && (
-                <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-700 rounded-xl">
+          {/* Sidebar */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Recognition Result */}
+            {result && (
+              <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-md rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl p-6">
+                <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-700 rounded-xl">
                   <div className="flex items-center space-x-3">
                     <div className="h-8 w-8 bg-green-500 rounded-full flex items-center justify-center">
                       <svg
@@ -182,12 +189,9 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
+            )}
 
-          {/* Sidebar */}
-          <div className="space-y-6">
             {/* Leaderboard */}
             {leaderboard.length > 0 && (
               <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-md rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl p-6">
@@ -293,44 +297,46 @@ export default function Home() {
             )}
 
             {/* Info Card */}
-            <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-md rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl p-6">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="h-8 w-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <svg
-                    className="h-4 w-4 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+            {!result && (
+              <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-md rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="h-8 w-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                    <svg
+                      className="h-4 w-4 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
+                    About
+                  </h2>
                 </div>
-                <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
-                  About
-                </h2>
-              </div>
 
-              <div className="space-y-3 text-sm text-slate-600 dark:text-slate-400">
-                <p>Real-time image recognition system using MQTT protocol.</p>
-                <div className="flex items-center space-x-2">
-                  <div className="h-1.5 w-1.5 bg-blue-500 rounded-full"></div>
-                  <span>Live camera feed processing</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="h-1.5 w-1.5 bg-green-500 rounded-full"></div>
-                  <span>AI-powered recognition</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="h-1.5 w-1.5 bg-purple-500 rounded-full"></div>
-                  <span>Real-time leaderboard</span>
+                <div className="space-y-3 text-sm text-slate-600 dark:text-slate-400">
+                  <p>Real-time image recognition system using MQTT protocol.</p>
+                  <div className="flex items-center space-x-2">
+                    <div className="h-1.5 w-1.5 bg-blue-500 rounded-full"></div>
+                    <span>Live camera feed processing</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="h-1.5 w-1.5 bg-green-500 rounded-full"></div>
+                    <span>AI-powered recognition</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="h-1.5 w-1.5 bg-purple-500 rounded-full"></div>
+                    <span>Real-time leaderboard</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </main>
